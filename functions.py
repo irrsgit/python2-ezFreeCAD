@@ -4,6 +4,9 @@ import Part
 import importDXF
 mydoc = FreeCAD.newDocument("mydoc")
 
+def cylinder (radius,height):
+    return Part.makeCylinder(radius,Height)
+
 def sphere(radius):
     return Part.makeSphere(radius)
 
