@@ -1,17 +1,25 @@
 #!/usr/bin/env python2
-from __future__ import division
-FREECADPATH = '/usr/lib/freecad' # path to your FreeCAD.so or FreeCAD.dll file
-import sys
-sys.path.append(FREECADPATH)
 import FreeCAD
 import Part
 import importDXF
 mydoc = FreeCAD.newDocument("mydoc")
 
+def sphere(radius):
+    return Part.makeSphere(radius)
+
+def cone(r1,r2,height):
+    return Part.makeCone(r1,r2,height)
 
 # returns a rectangular face given x and y dims
 def rectangle(xDim,yDim):
     return Part.makePlane(xDim,yDim)
+
+def rotate(obj,xDeg,yDeg,zDeg):
+    robj = obj.copy()
+    robj.rotate(FreeCAD.Vector(0,0,0),FreeCAD.Vector(1,0,0),xDeg)
+    robj.rotate(FreeCAD.Vector(0,0,0),FreeCAD.Vector(0,1,0),yDeg)
+    robj.rotate(FreeCAD.Vector(0,0,0),FreeCAD.Vector(0,0,1),zDeg)
+    return robj
 
 # reutns a circular face given a radius
 def circle(radius):
@@ -55,20 +63,20 @@ def solid2STEP (solid,outputFilename):
     return
 
 # extrudes a face to make a 3d solid
-def extrude (face,direction):
-    return face.extrude(FreeCAD.Vector(direction))
+def extrude (face,x,y,z):
+    return face.extrude(FreeCAD.Vector((x,y,z)))
 
 # moves an object
-def translate (obj,direction):
+def translate (obj,x,y,z):
     tobj = obj.copy()
-    tobj.translate(FreeCAD.Vector(direction))
+    tobj.translate(FreeCAD.Vector((x,y,z)))
     return tobj
 
 # given a solid and a z value, returns a set of edges 
 def section (solid,height="halfWay"):
     bb = solid.BoundBox
     if height == "halfWay":
-        zPos = bb.ZLength/2
+        zPos = bb.ZLength/2.0
     else:
         zPos = height
     slicePlane = rectangle(bb.XLength, bb.YLength)
