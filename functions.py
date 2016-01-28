@@ -65,6 +65,10 @@ def solid2STEP (solid,outputFilename):
     solid.exportStep(outputFilename)
     return
 
+# loads a file (probably handles things other than just STEP) and returns a solid shape
+def STEP2Solid(stepFilename):
+    return Part.read(stepFilename)
+
 # extrudes a face to make a 3d solid
 def extrude (face,x,y,z):
     return face.extrude(FreeCAD.Vector((x,y,z)))

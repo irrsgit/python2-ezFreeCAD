@@ -13,3 +13,5 @@ myDisc = translate(myDisc,0,25,3)
 osThingy = difference(myDisc, pawn)
 
 solid2STEP(osThingy, "osThingy.step")
+
+osThingy2 = STEP2Solid("osThingy.step")
