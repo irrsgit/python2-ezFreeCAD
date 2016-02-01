@@ -31,6 +31,50 @@ def circle(radius):
     circFace = Part.Face(circWire)
     return circFace
 
+# r can accept a salar or a list or tuple with 4 radii
+def roundedRectangle(xDim,yDim,r=None):
+    if r is None:
+        radii=(0,0,0,0)
+    elif (type(r) is float) or (type(r) is int):
+        radii=(r,r,r,r)
+    elif (type(r) is list) or (type(r) is tuple) and len(r) is 4:
+        radii=(r[0],r[1],r[2],r[3])
+    else:
+        print("Invalid value for r in roundedRectangle function")
+        return None
+    if (radii[0] + radii[3] > xDim) or (radii[1] + radii[2] > xDim) or (radii[0] + radii[1] > yDim) or (radii[3] + radii[2] > yDim):
+        print("This rounded rectangle is impossible to draw!")
+        return None
+    
+    p0 = FreeCAD.Vector(radii[0],yDim,0)
+    p1 = FreeCAD.Vector(xDim-radii[1],yDim,0)
+    p2 = FreeCAD.Vector(xDim,yDim-radii[1],0)
+    p3 = FreeCAD.Vector(xDim,radii[2],0)
+    p4 = FreeCAD.Vector(xDim-radii[2],0,0)
+    p5 = FreeCAD.Vector(radii[3],0,0)
+    p6 = FreeCAD.Vector(0,radii[3],0)
+    p7 = FreeCAD.Vector(0,yDim-radii[0],0)
+    
+    polygonWire=Part.makePolygon([p0,p1,p2,p3,p4,p5,p6,p7],True)
+    polygonFace=Part.Face(polygonWire)
+    
+    circles = []
+    if radii[0]>0:
+        circles.append(translate(circle(radii[0]),radii[0],yDim-radii[0],0))
+    if radii[1]>0:
+        circles.append(translate(circle(radii[1]),xDim-radii[1],yDim-radii[1],0))    
+    if radii[2]>0:
+        circles.append(translate(circle(radii[2]),xDim-radii[2],radii[2],0))  
+    if radii[3]>0:
+        circles.append(translate(circle(radii[3]),radii[3],radii[3],0))  
+    
+    if len(circles) > 0:
+        roundedGuy = polygonFace.multiFuse(circles,1e-5).removeSplitter().Faces[0]
+    else:
+        roundedGuy = polygonFace;
+
+    return roundedGuy
+
 # only tested/working with solid+solid and face+face unions
 def union(thingA,thingB,tol=1e-5):
     if (thingA.ShapeType == 'Face') and (thingB.ShapeType == 'Face'):
