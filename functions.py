@@ -117,6 +117,11 @@ def STEP2Solid(stepFilename):
 def extrude (face,x,y,z):
     return face.extrude(FreeCAD.Vector((x,y,z)))
 
+# mirrors an object across a plane defined by a point and a vector
+def mirror(obj,x,y,z,dirx,diry,dirz):
+    tobj = obj.copy()
+    return tobj.mirror(FreeCAD.Vector(x,y,z),FreeCAD.Vector(dirx,diry,dirz))
+
 # moves an object
 def translate (obj,x,y,z):
     tobj = obj.copy()
