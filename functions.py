@@ -109,6 +109,11 @@ def solid2STEP (solid,outputFilename):
     solid.exportStep(outputFilename)
     return
 
+# sends a solid object to a stl file
+def solid2STL (solid,outputFilename):
+    solid.exportStl(outputFilename)
+    return
+
 # loads a file (probably handles things other than just STEP) and returns a solid shape
 def STEP2Solid(stepFilename):
     return Part.read(stepFilename)
