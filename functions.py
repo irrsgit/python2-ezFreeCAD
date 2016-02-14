@@ -17,14 +17,16 @@ def cone(r1,r2,height):
 def rectangle(xDim,yDim):
     return Part.makePlane(xDim,yDim)
 
-def rotate(obj,xDeg,yDeg,zDeg):
+# rotate an object around a point: [px,py,pz]
+# xDeg, yDeg and zDeg degreees about those axes
+def rotate(obj,xDeg,yDeg,zDeg,px=0,py=0,pz=0):
     robj = obj.copy()
-    robj.rotate(FreeCAD.Vector(0,0,0),FreeCAD.Vector(1,0,0),xDeg)
-    robj.rotate(FreeCAD.Vector(0,0,0),FreeCAD.Vector(0,1,0),yDeg)
-    robj.rotate(FreeCAD.Vector(0,0,0),FreeCAD.Vector(0,0,1),zDeg)
+    robj.rotate(FreeCAD.Vector(px,py,pz),FreeCAD.Vector(1,0,0),xDeg)
+    robj.rotate(FreeCAD.Vector(px,py,pz),FreeCAD.Vector(0,1,0),yDeg)
+    robj.rotate(FreeCAD.Vector(px,py,pz),FreeCAD.Vector(0,0,1),zDeg)
     return robj
 
-# reutns a circular face given a radius
+# returns a circular face given a radius
 def circle(radius):
     circEdge = Part.makeCircle(radius)
     circWire = Part.Wire(circEdge)
@@ -127,6 +129,17 @@ def mirror(obj,x,y,z,dirx,diry,dirz):
     tobj = obj.copy()
     return tobj.mirror(FreeCAD.Vector(x,y,z),FreeCAD.Vector(dirx,diry,dirz))
 
+# makes a circular array of objects around a point [px,py,pz]
+# in a plane perpindicular to [dx,dy,dz]
+def circArray(obj,n,px,py,pz,dx,dy,dz,fillAngle=360):
+    dTheta=fillAngle/n
+    objects=[obj.copy()]
+    for i in range (1,n):
+        newObj= obj.copy()
+        newObj.rotate(FreeCAD.Vector(px,py,pz),FreeCAD.Vector(dx,dy,dz),i*dTheta)
+        objects.append(newObj)
+    return objects
+
 # moves an object
 def translate (obj,x,y,z):
     tobj = obj.copy()
@@ -141,7 +154,7 @@ def section (solid,height="halfWay"):
     else:
         zPos = height
     slicePlane = rectangle(bb.XLength, bb.YLength)
-    slicePlane.translate(FreeCAD.Vector(bb.XMin,bb.YMin,zPos))
+    slicePlane.translate(FreeCAD.Vector(bb.XMin,bb.YMin,zPos+bb.ZMin))
     sectionShape = solid.section(slicePlane)
     return sectionShape
 

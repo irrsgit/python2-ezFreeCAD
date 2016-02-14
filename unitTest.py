@@ -16,6 +16,15 @@ background = extrude(background, 0, 0, -5)
 background = translate(background, -25, 0, -15+3+2)
 osThingy = union(osThingy, background)
 
+thingySlice = section(osThingy)
+save2DXF(thingySlice, "osThingySlice.dxf")
+
 solid2STEP(osThingy, "osThingy.step")
 
 osThingy2 = STEP2Solid("osThingy.step")
+
+osThingys = circArray(osThingy, 3, 0, -50, 0, 0, 0, 1)
+
+solid2STEP(osThingys[0], "osThingyA.step")
+solid2STEP(osThingys[1], "osThingyB.step")
+solid2STEP(osThingys[2], "osThingyC.step")
