@@ -131,12 +131,15 @@ def mirror(obj,x,y,z,dirx,diry,dirz):
 
 # makes a circular array of objects around a point [px,py,pz]
 # in a plane perpindicular to [dx,dy,dz]
-def circArray(obj,n,px,py,pz,dx,dy,dz,fillAngle=360):
+def circArray(obj,n,px,py,pz,dx,dy,dz,fillAngle=360,startAngle=0):
     dTheta=fillAngle/n
-    objects=[obj.copy()]
+    obj0 = obj.copy()
+    if startAngle is not 0:
+        obj0.rotate(FreeCAD.Vector(px,py,pz),FreeCAD.Vector(dx,dy,dz),dTheta-startAngle)
+    objects=[obj0]
     for i in range (1,n):
         newObj= obj.copy()
-        newObj.rotate(FreeCAD.Vector(px,py,pz),FreeCAD.Vector(dx,dy,dz),i*dTheta)
+        newObj.rotate(FreeCAD.Vector(px,py,pz),FreeCAD.Vector(dx,dy,dz),i*dTheta+startAngle)
         objects.append(newObj)
     return objects
 
