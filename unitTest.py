@@ -20,6 +20,14 @@ osThingy2 = translate(osThingy2, 70, 0, 0)
 osThingys = [osThingy,osThingy2]
 osThingys = translate(osThingys, 0, 10, 0)
 
+drillCylinder = cylinder(5/2, 300)
+drillCylinder = rotate(drillCylinder, 0, 90, 0)
+drillCylinder = translate(drillCylinder, -300/2, 50/2, -5)
+drillCylinder2 = translate(drillCylinder, 0, 20, 0)
+drillCylinders = [drillCylinder, drillCylinder2]
+
+osThingys = difference(osThingys, drillCylinders)
+
 thingySlice = section(osThingys[0])
 save2DXF(thingySlice, "osThingySlice.dxf")
 

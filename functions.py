@@ -82,17 +82,27 @@ def union(thingA,thingsB,tol=1e-5):
 
 # TODO: this cut is leaving breaks in circles, try to upgrade it to fuzzy logic with tolerance
 # also I think remove splitter does nothing here
-def difference(thingA,thingsB):
+def difference(thingsA,thingsB):
+    if type(thingsA) is not list:
+        thingsA = [thingsA]    
     if type(thingsB) is not list:
-        thingsB = [thingB]
-    d = thingA
-    for thingB in thingsB:
-        if (d.ShapeType == 'Face') and (thingB.ShapeType == 'Face'):
-            d = d.cut(thingB).removeSplitter().Faces[0]
-        elif (d.ShapeType == 'Solid') and (thingB.ShapeType == 'Solid'):
-            d = d.cut(thingB).removeSplitter().Solids[0]
-        else:
-            d = []
+        thingsB = [thingsB]
+    
+    robjs=[]
+    for thingA in thingsA:
+        d = thingA
+        for thingB in thingsB:
+            if (d.ShapeType == 'Face') and (thingB.ShapeType == 'Face'):
+                d = d.cut(thingB).removeSplitter().Faces[0]
+            elif (d.ShapeType == 'Solid') and (thingB.ShapeType == 'Solid'):
+                d = d.cut(thingB).removeSplitter().Solids[0]
+            else:
+                return []
+        robjs.append(d)
+    if len(robjs) is 1:
+        return robjs[0]
+    else:
+        return robjs    
     return d
 
 # sends a projection of an object's edges onto the z=0 plane to a dxf file
