@@ -69,21 +69,21 @@ def roundedRectangle(xDim,yDim,r=None):
     return roundedGuy
 
 # only tested/working with solid+solid and face+face unions
-def union(thingA,thingB,tol=1e-5):
-    if type(thingB) is not list:
-        thingB = [thingB]
-    if (thingA.ShapeType == 'Face') and (thingB[0].ShapeType == 'Face'):
-        u = thingA.multiFuse(thingB,tol).removeSplitter().Faces[0]
-    elif (thingA.ShapeType == 'Solid') and (thingB[0].ShapeType == 'Solid'):
-        u = thingA.multiFuse(thingB,tol).removeSplitter().Solids[0]
+def union(thingA,thingsB,tol=1e-5):
+    if type(thingsB) is not list:
+        thingsB = [thingsB]
+    if (thingA.ShapeType == 'Face') and (thingsB[0].ShapeType == 'Face'):
+        u = thingA.multiFuse(thingsB,tol).removeSplitter().Faces[0]
+    elif (thingA.ShapeType == 'Solid') and (thingsB[0].ShapeType == 'Solid'):
+        u = thingA.multiFuse(thingsB,tol).removeSplitter().Solids[0]
     else:
         u = []
     return u
 
 # TODO: this cut is leaving breaks in circles, try to upgrade it to fuzzy logic with tolerance
 # also I think remove splitter does nothing here
-def difference(thingA,thingB):
-    if type(thingB) is not list:
+def difference(thingA,thingsB):
+    if type(thingsB) is not list:
         thingsB = [thingB]
     d = thingA
     for thingB in thingsB:
@@ -104,30 +104,30 @@ def save2DXF (thing,outputFilename):
     return
 
 # sends a solid object to a step file
-def solid2STEP (solid,outputFilename):
-    if type(solid) is not list:
-        solids=[solid]
-        outputFilenames=[outputFilename]
+def solid2STEP (solids,outputFilenames):
+    if type(solids) is not list:
+        solids=[solids]
+        outputFilenames=[outputFilenames]
     for i in range(len(solids)):
         solids[i].exportStep(outputFilenames[i])
     return
 
 # sends a solid object(or list of objects) to a stl file(s)
-def solid2STL (solid,outputFilename):
-    if type(solid) is not list:
-        solids=[solid]
-        outputFilenames=[outputFilename]
+def solid2STL (solids,outputFilenames):
+    if type(solids) is not list:
+        solids=[solids]
+        outputFilenames=[outputFilenames]
     for i in range(len(solids)):
         solids[i].exportStl(outputFilenames[i])
     return
 
 # loads a file(or a list of filenames) (probably handles things other than just STEP) and returns a solid shape
-def STEP2Solid(stepFilename):
-    if type(stepFilename) is not list:
-            objs=[stepFilename]
+def STEP2Solid(stepFilenames):
+    if type(stepFilenames) is not list:
+            stepFilenames=[stepFilenames]
     robjs=[]
-    for obj in objs:
-        robjs.append(Part.read(obj))
+    for stepFilename in stepFilenames:
+        robjs.append(Part.read(stepFilename))
     if len(robjs) is 1:
         return robjs[0]
     else:
