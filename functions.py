@@ -70,10 +70,12 @@ def roundedRectangle(xDim,yDim,r=None):
 
 # only tested/working with solid+solid and face+face unions
 def union(thingA,thingB,tol=1e-5):
-    if (thingA.ShapeType == 'Face') and (thingB.ShapeType == 'Face'):
-        u = thingA.multiFuse([thingB],tol).removeSplitter().Faces[0]
-    elif (thingA.ShapeType == 'Solid') and (thingB.ShapeType == 'Solid'):
-        u = thingA.multiFuse([thingB],tol).removeSplitter().Solids[0]
+    if type(thingB) is not list:
+        thingB = [thingB]
+    if (thingA.ShapeType == 'Face') and (thingB[0].ShapeType == 'Face'):
+        u = thingA.multiFuse(thingB,tol).removeSplitter().Faces[0]
+    elif (thingA.ShapeType == 'Solid') and (thingB[0].ShapeType == 'Solid'):
+        u = thingA.multiFuse(thingB,tol).removeSplitter().Solids[0]
     else:
         u = []
     return u
@@ -81,12 +83,16 @@ def union(thingA,thingB,tol=1e-5):
 # TODO: this cut is leaving breaks in circles, try to upgrade it to fuzzy logic with tolerance
 # also I think remove splitter does nothing here
 def difference(thingA,thingB):
-    if (thingA.ShapeType == 'Face') and (thingB.ShapeType == 'Face'):
-        d = thingA.cut(thingB).removeSplitter().Faces[0]
-    elif (thingA.ShapeType == 'Solid') and (thingB.ShapeType == 'Solid'):
-        d = thingA.cut(thingB).removeSplitter().Solids[0]
-    else:
-        d = []
+    if type(thingB) is not list:
+        thingsB = [thingB]
+    d = thingA
+    for thingB in thingsB:
+        if (d.ShapeType == 'Face') and (thingB.ShapeType == 'Face'):
+            d = d.cut(thingB).removeSplitter().Faces[0]
+        elif (d.ShapeType == 'Solid') and (thingB.ShapeType == 'Solid'):
+            d = d.cut(thingB).removeSplitter().Solids[0]
+        else:
+            d = []
     return d
 
 # sends a projection of an object's edges onto the z=0 plane to a dxf file
