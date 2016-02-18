@@ -15,13 +15,18 @@ background = roundedRectangle(50, 50,r=(2,5,0,0))
 background = extrude(background, 0, 0, -5)
 background = translate(background, -25, 0, -15+3+2)
 osThingy = union(osThingy, background)
+osThingy2 = osThingy
+osThingy2 = translate(osThingy2, 70, 0, 0)
+osThingys = [osThingy,osThingy2]
+osThingys = translate(osThingys, 0, 10, 0)
 
-thingySlice = section(osThingy)
+thingySlice = section(osThingys[0])
 save2DXF(thingySlice, "osThingySlice.dxf")
 
-solid2STEP(osThingy, "osThingy.step")
+solid2STEP(osThingys[0], "osThingy.step")
+solid2STEP(osThingys[1], "osThingy2.step")
 
-osThingy2 = STEP2Solid("osThingy.step")
+osThingy3 = STEP2Solid("osThingy.step")
 
 osThingys = circArray(osThingy, 3, 0, -50, 0, 0, 0, 1)
 

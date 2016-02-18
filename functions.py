@@ -17,15 +17,6 @@ def cone(r1,r2,height):
 def rectangle(xDim,yDim):
     return Part.makePlane(xDim,yDim)
 
-# rotate an object around a point: [px,py,pz]
-# xDeg, yDeg and zDeg degreees about those axes
-def rotate(obj,xDeg,yDeg,zDeg,px=0,py=0,pz=0):
-    robj = obj.copy()
-    robj.rotate(FreeCAD.Vector(px,py,pz),FreeCAD.Vector(1,0,0),xDeg)
-    robj.rotate(FreeCAD.Vector(px,py,pz),FreeCAD.Vector(0,1,0),yDeg)
-    robj.rotate(FreeCAD.Vector(px,py,pz),FreeCAD.Vector(0,0,1),zDeg)
-    return robj
-
 # returns a circular face given a radius
 def circle(radius):
     circEdge = Part.makeCircle(radius)
@@ -88,7 +79,7 @@ def union(thingA,thingB,tol=1e-5):
     return u
 
 # TODO: this cut is leaving breaks in circles, try to upgrade it to fuzzy logic with tolerance
-# also remove splitter does nothing here
+# also I think remove splitter does nothing here
 def difference(thingA,thingB):
     if (thingA.ShapeType == 'Face') and (thingB.ShapeType == 'Face'):
         d = thingA.cut(thingB).removeSplitter().Faces[0]
@@ -108,26 +99,57 @@ def save2DXF (thing,outputFilename):
 
 # sends a solid object to a step file
 def solid2STEP (solid,outputFilename):
-    solid.exportStep(outputFilename)
+    if type(solid) is not list:
+        solids=[solid]
+        outputFilenames=[outputFilename]
+    for i in range(len(solids)):
+        solids[i].exportStep(outputFilenames[i])
     return
 
-# sends a solid object to a stl file
+# sends a solid object(or list of objects) to a stl file(s)
 def solid2STL (solid,outputFilename):
-    solid.exportStl(outputFilename)
+    if type(solid) is not list:
+        solids=[solid]
+        outputFilenames=[outputFilename]
+    for i in range(len(solids)):
+        solids[i].exportStl(outputFilenames[i])
     return
 
-# loads a file (probably handles things other than just STEP) and returns a solid shape
+# loads a file(or a list of filenames) (probably handles things other than just STEP) and returns a solid shape
 def STEP2Solid(stepFilename):
-    return Part.read(stepFilename)
+    if type(stepFilename) is not list:
+            objs=[stepFilename]
+    robjs=[]
+    for obj in objs:
+        robjs.append(Part.read(obj))
+    if len(robjs) is 1:
+        return robjs[0]
+    else:
+        return robjs
 
-# extrudes a face to make a 3d solid
-def extrude (face,x,y,z):
-    return face.extrude(FreeCAD.Vector((x,y,z)))
+# extrudes a face (or list of faces) to make a 3d solid
+def extrude (objs,x,y,z):
+    if type(objs) is not list:
+        objs=[objs]
+    robjs=[]
+    for obj in objs:
+        robjs.append(obj.extrude(FreeCAD.Vector((x,y,z))))
+    if len(robjs) is 1:
+        return robjs[0]
+    else:
+        return robjs
 
-# mirrors an object across a plane defined by a point and a vector
-def mirror(obj,x,y,z,dirx,diry,dirz):
-    tobj = obj.copy()
-    return tobj.mirror(FreeCAD.Vector(x,y,z),FreeCAD.Vector(dirx,diry,dirz))
+# mirrors an object (or a list of objects) across a plane defined by a point and a vector
+def mirror(objs,x,y,z,dirx,diry,dirz):
+    if type(objs) is not list:
+        objs=[objs]
+    robjs=[]
+    for obj in objs:
+        robjs.append(obj.mirror(FreeCAD.Vector(x,y,z),FreeCAD.Vector(dirx,diry,dirz)))
+    if len(robjs) is 1:
+        return robjs[0]
+    else:
+        return robjs
 
 # makes a circular array of objects around a point [px,py,pz]
 # in a plane perpindicular to [dx,dy,dz]
@@ -143,11 +165,36 @@ def circArray(obj,n,px,py,pz,dx,dy,dz,fillAngle=360,startAngle=0):
         objects.append(newObj)
     return objects
 
-# moves an object
-def translate (obj,x,y,z):
-    tobj = obj.copy()
-    tobj.translate(FreeCAD.Vector((x,y,z)))
-    return tobj
+# moves an object or a list of objects
+def translate (objs,x,y,z):
+    if type(objs) is not list:
+        objs=[objs]
+    robjs=[]
+    for obj in objs:
+        robj=obj.copy()
+        robj.translate(FreeCAD.Vector((x,y,z)))
+        robjs.append(robj)
+    if len(robjs) is 1:
+        return robjs[0]
+    else:
+        return robjs
+    
+# rotate (an) object(s) around a point: [px,py,pz]
+# xDeg, yDeg and zDeg degreees about those axes
+def rotate(objs,xDeg,yDeg,zDeg,px=0,py=0,pz=0):
+    if type(objs) is not list:
+        objs=[objs]
+    robjs=[]
+    for obj in objs:
+        robj = obj.copy()
+        robj.rotate(FreeCAD.Vector(px,py,pz),FreeCAD.Vector(1,0,0),xDeg)
+        robj.rotate(FreeCAD.Vector(px,py,pz),FreeCAD.Vector(0,1,0),yDeg)
+        robj.rotate(FreeCAD.Vector(px,py,pz),FreeCAD.Vector(0,0,1),zDeg)
+        robjs.append(robj)
+    if len(robjs) is 1:
+        return robjs[0]
+    else:
+        return robjs
 
 # given a solid and a z value, returns a set of edges 
 def section (solid,height="halfWay"):
