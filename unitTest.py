@@ -26,7 +26,7 @@ drillCylinder = translate(drillCylinder, -300/2, 50/2, -5)
 drillCylinder2 = translate(drillCylinder, 0, 20, 0)
 drillCylinders = [drillCylinder, drillCylinder2]
 
-osThingys = difference(osThingys, drillCylinders)
+osThingys = difference(osThingys, drillCylinder)
 
 thingySlice = section(osThingys[0])
 save2DXF(thingySlice, "osThingySlice.dxf")

@@ -84,7 +84,10 @@ def union(thingA,thingsB,tol=1e-5):
 # also I think remove splitter does nothing here
 def difference(thingsA,thingsB):
     if type(thingsA) is not list:
-        thingsA = [thingsA]    
+        thingsA = [thingsA]
+        listIn=False
+    else:
+        listIn=True
     if type(thingsB) is not list:
         thingsB = [thingsB]
     
@@ -99,7 +102,7 @@ def difference(thingsA,thingsB):
             else:
                 return []
         robjs.append(d)
-    if len(robjs) is 1:
+    if (len(robjs) is 1) and (listIn is False):
         return robjs[0]
     else:
         return robjs    
@@ -134,11 +137,14 @@ def solid2STL (solids,outputFilenames):
 # loads a file(or a list of filenames) (probably handles things other than just STEP) and returns a solid shape
 def STEP2Solid(stepFilenames):
     if type(stepFilenames) is not list:
-            stepFilenames=[stepFilenames]
+        listIn = False
+        stepFilenames=[stepFilenames]
+    else:
+        listIn=True
     robjs=[]
     for stepFilename in stepFilenames:
         robjs.append(Part.read(stepFilename))
-    if len(robjs) is 1:
+    if (len(robjs) is 1) and (listIn is False):
         return robjs[0]
     else:
         return robjs
@@ -146,11 +152,14 @@ def STEP2Solid(stepFilenames):
 # extrudes a face (or list of faces) to make a 3d solid
 def extrude (objs,x,y,z):
     if type(objs) is not list:
+        listIn=False
         objs=[objs]
+    else:
+        listIn=True
     robjs=[]
     for obj in objs:
         robjs.append(obj.extrude(FreeCAD.Vector((x,y,z))))
-    if len(robjs) is 1:
+    if (len(robjs) is 1) and (listIn is False):
         return robjs[0]
     else:
         return robjs
@@ -158,11 +167,14 @@ def extrude (objs,x,y,z):
 # mirrors an object (or a list of objects) across a plane defined by a point and a vector
 def mirror(objs,x,y,z,dirx,diry,dirz):
     if type(objs) is not list:
+        listIn=False
         objs=[objs]
+    else:
+        listIn=True
     robjs=[]
     for obj in objs:
         robjs.append(obj.mirror(FreeCAD.Vector(x,y,z),FreeCAD.Vector(dirx,diry,dirz)))
-    if len(robjs) is 1:
+    if (len(robjs) is 1) and (listIn is False):
         return robjs[0]
     else:
         return robjs
@@ -184,13 +196,16 @@ def circArray(obj,n,px,py,pz,dx,dy,dz,fillAngle=360,startAngle=0):
 # moves an object or a list of objects
 def translate (objs,x,y,z):
     if type(objs) is not list:
+        listIn=False
         objs=[objs]
+    else:
+        listIn=True
     robjs=[]
     for obj in objs:
         robj=obj.copy()
         robj.translate(FreeCAD.Vector((x,y,z)))
         robjs.append(robj)
-    if len(robjs) is 1:
+    if (len(robjs) is 1) and (listIn is False):
         return robjs[0]
     else:
         return robjs
@@ -199,7 +214,10 @@ def translate (objs,x,y,z):
 # xDeg, yDeg and zDeg degreees about those axes
 def rotate(objs,xDeg,yDeg,zDeg,px=0,py=0,pz=0):
     if type(objs) is not list:
+        listIn=False
         objs=[objs]
+    else:
+        listIn=True
     robjs=[]
     for obj in objs:
         robj = obj.copy()
@@ -207,7 +225,7 @@ def rotate(objs,xDeg,yDeg,zDeg,px=0,py=0,pz=0):
         robj.rotate(FreeCAD.Vector(px,py,pz),FreeCAD.Vector(0,1,0),yDeg)
         robj.rotate(FreeCAD.Vector(px,py,pz),FreeCAD.Vector(0,0,1),zDeg)
         robjs.append(robj)
-    if len(robjs) is 1:
+    if (len(robjs) is 1) and (listIn is False):
         return robjs[0]
     else:
         return robjs
