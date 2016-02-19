@@ -24,14 +24,24 @@ def circle(radius):
     circFace = Part.Face(circWire)
     return circFace
 
-# r can accept a salar or a list or tuple with 4 radii
-def roundedRectangle(xDim,yDim,r=None):
+# r can accept a salar or a list or tuple with 4 radii, drillCorners adds circles at the corners
+def roundedRectangle(xDim,yDim,r=None,drillCorners=False):
+    if drillCorners is False:
+        drillCorners=[False,False,False,False]
+    elif drillCorners is True:
+        drillCorners=[True,True,True,True]
+    elif type(drillCorners) is tuple:
+        drillCorners = list(drillCorners)
+    elif len(drillCorners) is not 4:
+        print("Invalid value for drillCorners in roundedRectangle function")
+        return None
+    
     if r is None:
-        radii=(0,0,0,0)
+        radii=[0,0,0,0]
     elif (type(r) is float) or (type(r) is int):
-        radii=(r,r,r,r)
+        radii=[r,r,r,r]
     elif (type(r) is list) or (type(r) is tuple) and len(r) is 4:
-        radii=(r[0],r[1],r[2],r[3])
+        radii=[r[0],r[1],r[2],r[3]]
     else:
         print("Invalid value for r in roundedRectangle function")
         return None
@@ -52,14 +62,26 @@ def roundedRectangle(xDim,yDim,r=None):
     polygonFace=Part.Face(polygonWire)
     
     circles = []
-    if radii[0]>0:
-        circles.append(translate(circle(radii[0]),radii[0],yDim-radii[0],0))
-    if radii[1]>0:
-        circles.append(translate(circle(radii[1]),xDim-radii[1],yDim-radii[1],0))    
-    if radii[2]>0:
-        circles.append(translate(circle(radii[2]),xDim-radii[2],radii[2],0))  
-    if radii[3]>0:
-        circles.append(translate(circle(radii[3]),radii[3],radii[3],0))  
+    if radii[0]>0: # northwest
+        c0 = circle(radii[0])
+        radii[0] = 0 if drillCorners[0] is True else radii[0]
+        c0 = translate(c0,radii[0],yDim-radii[0],0)
+        circles.append(c0)
+    if radii[1]>0: # northeast
+        c1 = circle(radii[1])
+        radii[1] = 0 if drillCorners[1] is True else radii[1]
+        c1 = translate(c1,xDim-radii[1],yDim-radii[1],0)
+        circles.append(c1)    
+    if radii[2]>0: # southeast
+        c2 = circle(radii[2])
+        radii[2] = 0 if drillCorners[2] is True else radii[2]
+        c2 = translate(c2,xDim-radii[2],radii[2],0)
+        circles.append(c2)  
+    if radii[3]>0: # southwest
+        c3 = circle(radii[3])
+        radii[3] = 0 if drillCorners[3] is True else radii[3]
+        c3 = translate(c3,radii[3],radii[3],0)
+        circles.append(c3)  
     
     if len(circles) > 0:
         roundedGuy = polygonFace.multiFuse(circles,1e-5).removeSplitter().Faces[0]

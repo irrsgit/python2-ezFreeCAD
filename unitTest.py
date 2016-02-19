@@ -11,7 +11,7 @@ myDisc = extrude(myCircle,0,0,-15)
 #myDisc = rotate(myDisc,-90,0,0)
 myDisc = translate(myDisc,0,25,3)
 osThingy = difference(myDisc, pawn)
-background = roundedRectangle(50, 50,r=(2,5,0,0))
+background = roundedRectangle(50, 50,r=(2,5,7,9),drillCorners=(False,False,True,True))
 background = extrude(background, 0, 0, -5)
 background = translate(background, -25, 0, -15+3+2)
 osThingy = union(osThingy, background)
@@ -26,7 +26,7 @@ drillCylinder = translate(drillCylinder, -300/2, 50/2, -5)
 drillCylinder2 = translate(drillCylinder, 0, 20, 0)
 drillCylinders = [drillCylinder, drillCylinder2]
 
-osThingys = difference(osThingys, drillCylinder)
+osThingys = difference(osThingys, drillCylinders)
 
 thingySlice = section(osThingys[0])
 save2DXF(thingySlice, "osThingySlice.dxf")
