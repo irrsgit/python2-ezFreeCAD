@@ -24,8 +24,12 @@ def circle(radius):
     circFace = Part.Face(circWire)
     return circFace
 
-# r can accept a salar or a list or tuple with 4 radii, drillCorners adds circles at the corners
-def roundedRectangle(xDim,yDim,r=None,drillCorners=False):
+# r can accept a scalar or a list or tuple with 4 radii, drillCorners adds circles at the corners
+# if r is a length 4 iterable, the edges will be rounded with radii = [northwest,northeast,southeast,southwest]
+# if ear=True rounded leadins will be made on the southeast and southwest
+# corners assuming that the south edge will later be connected to something and these will be a fillet to that
+# then the southeast southwest radii specified will be used for those fillets
+def roundedRectangle(xDim,yDim,r=None,drillCorners=False,ear=False):
     if drillCorners is False:
         drillCorners=[False,False,False,False]
     elif drillCorners is True:
@@ -45,7 +49,7 @@ def roundedRectangle(xDim,yDim,r=None,drillCorners=False):
     else:
         print("Invalid value for r in roundedRectangle function")
         return None
-    if (radii[0] + radii[3] > xDim) or (radii[1] + radii[2] > xDim) or (radii[0] + radii[1] > yDim) or (radii[3] + radii[2] > yDim):
+    if (radii[0] + radii[3] > yDim) or (radii[1] + radii[2] > yDim) or (radii[0] + radii[1] > xDim) or (radii[3] + radii[2] > xDim):
         print("This rounded rectangle is impossible to draw!")
         return None
     
@@ -64,24 +68,46 @@ def roundedRectangle(xDim,yDim,r=None,drillCorners=False):
     circles = []
     if radii[0]>0: # northwest
         c0 = circle(radii[0])
-        radii[0] = 0 if drillCorners[0] is True else radii[0]
-        c0 = translate(c0,radii[0],yDim-radii[0],0)
+        cornerOffsetXY = radii[0]
+        if drillCorners[0] is True:
+            cornerOffsetXY = cornerOffsetXY*2**(0.5)/2
+        c0 = translate(c0,cornerOffsetXY,yDim-cornerOffsetXY,0)
         circles.append(c0)
     if radii[1]>0: # northeast
         c1 = circle(radii[1])
-        radii[1] = 0 if drillCorners[1] is True else radii[1]
-        c1 = translate(c1,xDim-radii[1],yDim-radii[1],0)
+        cornerOffsetXY = radii[1]
+        if drillCorners[1] is True:
+            cornerOffsetXY = cornerOffsetXY*2**(0.5)/2
+        c1 = translate(c1,xDim-cornerOffsetXY,yDim-cornerOffsetXY,0)
         circles.append(c1)    
     if radii[2]>0: # southeast
         c2 = circle(radii[2])
-        radii[2] = 0 if drillCorners[2] is True else radii[2]
-        c2 = translate(c2,xDim-radii[2],radii[2],0)
+        cornerOffsetXY = radii[2]
+        if drillCorners[2] is True:
+            cornerOffsetXY = cornerOffsetXY*2**(0.5)/2
+        c2 = translate(c2,xDim-cornerOffsetXY,cornerOffsetXY,0)
+        if ear is True:
+            c2 = Part.makePlane(2*radii[2],radii[2])
+            rounder = Part.makeCircle(radii[2], FreeCAD.Vector(2*radii[2],radii[2],0))
+            rounder = Part.Wire(rounder)
+            rounder = Part.Face(rounder)            
+            c2 = c2.cut(rounder)
+            c2.translate(FreeCAD.Vector((xDim-radii[2],0,0)))
         circles.append(c2)  
     if radii[3]>0: # southwest
         c3 = circle(radii[3])
-        radii[3] = 0 if drillCorners[3] is True else radii[3]
-        c3 = translate(c3,radii[3],radii[3],0)
-        circles.append(c3)  
+        cornerOffsetXY = radii[3]
+        if drillCorners[3] is True:
+            cornerOffsetXY = cornerOffsetXY*2**(0.5)/2
+        c3 = translate(c3,cornerOffsetXY,cornerOffsetXY,0)
+        if ear is True:
+            c3 = Part.makePlane(2*radii[3],radii[3])
+            rounder = Part.makeCircle(radii[3], FreeCAD.Vector(0,radii[3],0))
+            rounder = Part.Wire(rounder)
+            rounder = Part.Face(rounder)            
+            c3 = c3.cut(rounder)
+            c3.translate(FreeCAD.Vector((-radii[3],0,0)))
+        circles.append(c3)
     
     if len(circles) > 0:
         roundedGuy = polygonFace.multiFuse(circles,1e-5).removeSplitter().Faces[0]
