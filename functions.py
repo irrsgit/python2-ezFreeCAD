@@ -117,44 +117,92 @@ def roundedRectangle(xDim,yDim,r=None,drillCorners=False,ear=False):
     return roundedGuy
 
 # only tested/working with solid+solid and face+face unions
-def union(thingA,thingsB,tol=1e-5):
+def union(thingsA,thingsB,tol=1e-5):
     if type(thingsB) is not list:
         thingsB = [thingsB]
+    if type(thingsA) is list:
+        thingA = thingsA[0]
+        if len(thingsA) > 1:
+            thingsB += thingsA[1::]
+    else:
+        thingA = thingsA
     if (thingA.ShapeType == 'Face') and (thingsB[0].ShapeType == 'Face'):
-        u = thingA.multiFuse(thingsB,tol).removeSplitter().Faces[0]
+        u = thingA.multiFuse(thingsB,tol).removeSplitter().Faces
     elif (thingA.ShapeType == 'Solid') and (thingsB[0].ShapeType == 'Solid'):
-        u = thingA.multiFuse(thingsB,tol).removeSplitter().Solids[0]
+        u = thingA.multiFuse(thingsB,tol).removeSplitter().Solids
     else:
         u = []
-    return u
+    if (len(u) is 1):
+        return u[0]
+    else:
+        return u
 
 # TODO: this cut is leaving breaks in circles, try to upgrade it to fuzzy logic with tolerance
 # also I think remove splitter does nothing here
 def difference(thingsA,thingsB):
     if type(thingsA) is not list:
         thingsA = [thingsA]
-        listIn=False
-    else:
-        listIn=True
     if type(thingsB) is not list:
         thingsB = [thingsB]
-    
     robjs=[]
     for thingA in thingsA:
-        d = thingA
-        for thingB in thingsB:
-            if (d.ShapeType == 'Face') and (thingB.ShapeType == 'Face'):
-                d = d.cut(thingB).removeSplitter().Faces[0]
-            elif (d.ShapeType == 'Solid') and (thingB.ShapeType == 'Solid'):
-                d = d.cut(thingB).removeSplitter().Solids[0]
-            else:
-                return []
-        robjs.append(d)
-    if (len(robjs) is 1) and (listIn is False):
+        cutResult = multiCut(thingA,thingsB)
+        if type(cutResult) is list:
+            robjs += cutResult
+        else:
+            robjs.append(cutResult)
+    if (len(robjs) is 1):
         return robjs[0]
     else:
-        return robjs    
-    return d
+        return robjs
+    
+# multiCut() subtracts a list of childObjects away from a parent object
+
+# input objects can be faces or solids (don't even think about mixing 'em!)
+# childObjects can be a list or one face/solid
+# the output will be a list of faces/solids only if it needs to be
+def multiCut(parentObject,childObjects,tol=1e-5):
+    if type(childObjects) is not list:
+        childObjectsInternal = [childObjects]
+    else:
+        childObjectsInternal = list(childObjects)
+
+    #if len(childObjectsInternal) > 1: #fuse cutting objects
+        #childFuse = childObjectsInternal[0].multiFuse(childObjectsInternal[1::],tol).removeSplitter()
+        #if len(childFuse.Solids) > 0:
+            #childObjectsInternal = childFuse.Solids
+        #else:
+            #childObjectsInternal = childFuse.Faces
+
+    cuttingTools = childObjectsInternal # we'll call our child objects cutting tools
+    workpieces = [parentObject]
+    while len(cuttingTools) is not 0: # let's cut away until our tools run out
+        nPieces = len(workpieces)
+        for i in range(nPieces):
+            cutResult = workpieces[i].cut(cuttingTools[0]).removeSplitter()
+            if len(cutResult.Solids) > 0:
+                cutResult = cutResult.Solids # there's a solid in our results, so we'll assume to be operating on those
+            else:
+                cutResult = cutResult.Faces # no solids, so we must be operating on faces
+                
+            # let's inspect the result of our cut. there are three options:
+            if len(cutResult) is 0: # the cut has eliminated the workpiece
+                workpieces[i] = [] # mark this workpiece for removal
+            elif len(cutResult) > 1: # the workpiece has been segmented into two or more pieces by the cut
+                workpieces[i] = [] # mark this workpiece for removal, it was split up
+                workpieces += cutResult # add the new split pieces to our list of things to be cut
+            else: # the piece being cut was not split and not consumed by the cut
+                workpieces[i] = cutResult[0]
+                
+        # we've finished cutting all the workpieces; throw away the current cutting tool
+        del cuttingTools[0] 
+        
+        # before we move onto the next cutting tool, delete all the extraneous workpieces
+        workpieces = [x for x in workpieces if x != []]
+    if len(workpieces) is 1:
+        return workpieces[0]
+    else:
+        return workpieces
 
 # sends a projection of an object's edges onto the z=0 plane to a dxf file
 def save2DXF (thing,outputFilename):

@@ -41,3 +41,13 @@ osThingys = circArray(osThingy, 3, 0, -50, 0, 0, 0, 1)
 solid2STEP(osThingys[0], "osThingyA.step")
 solid2STEP(osThingys[1], "osThingyB.step")
 solid2STEP(osThingys[2], "osThingyC.step")
+
+# multicut test:
+
+parent= rectangle(10,10)
+child1 = translate(rectangle(1,10),1,0,0)
+child2 = translate(rectangle(1,10),4,0,0)
+child3 = translate(rectangle(10,1),0,5,0)
+result = multiCut(parent, [child1,child2,child3])
+
+print "break"
