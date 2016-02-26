@@ -216,9 +216,17 @@ def save2DXF (thing,outputFilename):
 def solid2STEP (solids,outputFilenames):
     if type(solids) is not list:
         solids=[solids]
-        outputFilenames=[outputFilenames]
-    for i in range(len(solids)):
-        solids[i].exportStep(outputFilenames[i])
+    if type(outputFilenames) is not list: # all the solids go into one file
+        tmpParts = []
+        for i in range(len(solids)):
+            tmpParts.append(mydoc.addObject("Part::Feature"))
+            tmpParts[i].Shape = solids[i]
+        Part.export(tmpParts,outputFilenames)
+        for i in range(len(tmpParts)): # remove all objects from the document
+            mydoc.removeObject(tmpParts[i].Name)
+    else: # list of filenames
+        for i in range(len(solids)):
+            solids[i].exportStep(outputFilenames[i])        
     return
 
 # sends a solid object(or list of objects) to a stl file(s)
