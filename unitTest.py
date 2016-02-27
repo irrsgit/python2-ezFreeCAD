@@ -31,6 +31,10 @@ osThingys = difference(osThingys, drillCylinders)
 thingySlice = section(osThingys[0])
 save2DXF(thingySlice, "osThingySlice.dxf")
 
+sliceReadBack = loadDXF("osThingySlice.dxf") # this writes to a layer named "0"
+solid2STEP(sliceReadBack["0"], "sliceWriteout.step")
+
+
 solid2STEP(osThingys[0], "osThingy.step")
 solid2STEP(osThingys[1], "osThingy2.step")
 
@@ -49,5 +53,6 @@ child1 = translate(rectangle(1,10),1,0,0)
 child2 = translate(rectangle(1,10),4,0,0)
 child3 = translate(rectangle(10,1),0,5,0)
 result = multiCut(parent, [child1,child2,child3])
+
 
 print "break"

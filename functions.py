@@ -1,7 +1,12 @@
 #!/usr/bin/env python2
+
+# this library tries to abstract away all that annoys me when using Python to draw with FreeCAD 
+# Written by Grey Christoforo <first name [at] last name [dot] net>
+
 import FreeCAD
 import Part
 import importDXF
+import os
 mydoc = FreeCAD.newDocument("mydoc")
 
 def cylinder (radius,height):
@@ -146,7 +151,7 @@ def difference(thingsA,thingsB):
         thingsB = [thingsB]
     robjs=[]
     for thingA in thingsA:
-        cutResult = multiCut(thingA,thingsB)
+        cutResult = _multiCut(thingA,thingsB)
         if type(cutResult) is list:
             robjs += cutResult
         else:
@@ -156,12 +161,12 @@ def difference(thingsA,thingsB):
     else:
         return robjs
     
-# multiCut() subtracts a list of childObjects away from a parent object
+# _multiCut() subtracts a list of childObjects away from a parent object
 
 # input objects can be faces or solids (don't even think about mixing 'em!)
 # childObjects can be a list or one face/solid
 # the output will be a list of faces/solids only if it needs to be
-def multiCut(parentObject,childObjects,tol=1e-5):
+def _multiCut(parentObject,childObjects,tol=1e-5):
     if type(childObjects) is not list:
         childObjectsInternal = [childObjects]
     else:
@@ -204,13 +209,39 @@ def multiCut(parentObject,childObjects,tol=1e-5):
     else:
         return workpieces
 
-# sends a projection of an object's edges onto the z=0 plane to a dxf file
+# sends a projection of an object's edges onto the z=0 plane to a dxf file (in a layer named "0")
 def save2DXF (thing,outputFilename):
     tmpPart = mydoc.addObject("Part::Feature")
     tmpPart.Shape = thing
     importDXF.export([tmpPart], outputFilename)
     mydoc.removeObject(tmpPart.Name)
     return
+
+# reads a dxf file
+# returns a dict with where the keys are the layer names and the values are lists of shapes in that layer
+def loadDXF (DXFFilename):
+    # this adds some number of objects to mydoc (three maybe?)
+    # the one we're interested in has the name
+    importDXF.insert(DXFFilename,mydoc.Name)
+    group = mydoc.getObject(os.path.splitext(DXFFilename)[0])
+    partFeature = mydoc.getObject("Block_PART__FEATURE")
+    nLayers = len(group.OutList)
+    retDict = {}
+    for i in range(nLayers):
+        layerName = str(group.OutList[i].Label)
+        layerShapes = []
+        nShapesInThisLayer = len(group.OutList[i].Group)
+        for j in range (nShapesInThisLayer):
+            layerShapes.append(group.OutList[i].Group[j].Shape)
+        retDict[layerName] = layerShapes
+        
+    # clean it all up
+    nObjects = len(mydoc.Objects)
+    for i in range(nObjects):
+        mydoc.removeObject(mydoc.Objects[0].Name)
+    return retDict
+
+
 
 # sends a solid object to a step file
 def solid2STEP (solids,outputFilenames):
