@@ -5,6 +5,7 @@
 
 import FreeCAD
 import Part
+import Mesh
 import importDXF
 import os
 mydoc = FreeCAD.newDocument("mydoc")
@@ -261,12 +262,13 @@ def solid2STEP (solids,outputFilenames):
     return
 
 # sends a solid object(or list of objects) to a stl file(s)
-def solid2STL (solids,outputFilenames):
+def solid2STL (solids,outputFilenames,meshTol=0.01):
     if type(solids) is not list:
         solids=[solids]
         outputFilenames=[outputFilenames]
     for i in range(len(solids)):
-        solids[i].exportStl(outputFilenames[i])
+        mesh = Mesh.Mesh(solids[i].tessellate(meshTol))
+        mesh.write(outputFilenames[i],"STL")
     return
 
 # loads a file(or a list of filenames) (probably handles things other than just STEP) and returns a solid shape
