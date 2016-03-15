@@ -1,5 +1,6 @@
 from __future__ import division
 from __init__ import *
+#import ezFreeCAD
 
 myCone = cone(10, 0, 30)
 mySphere = sphere(10)
