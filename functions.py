@@ -224,7 +224,7 @@ def loadDXF (DXFFilename):
     # this adds some number of objects to mydoc (three maybe?)
     # the one we're interested in has the name
     importDXF.insert(DXFFilename,mydoc.Name)
-    group = mydoc.getObject(os.path.splitext(DXFFilename)[0])
+    group = mydoc.getObject(os.path.splitext(os.path.split(DXFFilename)[1])[0])
     partFeature = mydoc.getObject("Block_PART__FEATURE")
     nLayers = len(group.OutList)
     retDict = {}
