@@ -16,7 +16,7 @@ else:
 
 try:
     import importDXF
-except ImportError:
+except:
     warnings.warn("Could not import the importDXF module, dxf related functions will be broken", ImportWarning)
 
 
