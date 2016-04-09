@@ -7,5 +7,5 @@ setup(name='ezFreeCAD',
       author='Grey Christoforo',
       author_email='first name [at] last name [dot] net',
       license='GNUGPLv2',
-      packages=['ezFreecad'],
+      packages=['ezFreeCAD'],
       zip_safe=False)
