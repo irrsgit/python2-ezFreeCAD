@@ -8,11 +8,18 @@ sys.path.append(FREECADPATH)
 # it tries to make pythong FreeCAD designing as easy as drawing things with OpenSCAD
 # Written by Grey Christoforo <first name [at] last name [dot] net>
 
+import warnings
+import os
 import FreeCAD
 import Part
 import Mesh
-import importDXF
-import os
+
+try:
+    import importDXF
+except ImportError:
+    warnings.warn("Could not import the importDXF module, dxf related functions will be broken", ImportWarning)
+
+
 mydoc = FreeCAD.newDocument("mydoc")
 
 def cylinder (radius,height):
