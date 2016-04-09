@@ -5,12 +5,14 @@
 import sys
 import warnings
 import os
-import Part
-import Mesh
 
-# let's make sure the FreeCAD module has been imported
+# use the previoulsy imported FreeCAD module here
 if not 'FreeCAD' in sys.modules:
     raise ImportError('You must import the FreeCAD module')
+else:
+    FreeCAD = sys.modules['FreeCAD']
+    import Part
+    import Mesh
 
 try:
     import importDXF
