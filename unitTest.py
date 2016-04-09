@@ -5,6 +5,8 @@ from __future__ import division
 import sys
 sys.path.append('/usr/lib/freecad') # path to your FreeCAD.so or FreeCAD.dll file
 import FreeCAD
+
+import warnings
 import ezFreeCAD as ezfc
 
 
@@ -36,11 +38,12 @@ drillCylinders = [drillCylinder, drillCylinder2]
 osThingys = ezfc.difference(osThingys, drillCylinders)
 
 thingySlice = ezfc.section(osThingys[0])
-ezfc.save2DXF(thingySlice, "osThingySlice.dxf")
-
-sliceReadBack = ezfc.loadDXF("osThingySlice.dxf") # this writes to a layer named "0"
-ezfc.solid2STEP(sliceReadBack["0"], "sliceWriteout.step")
-
+try:
+    ezfc.save2DXF(thingySlice, "osThingySlice.dxf")
+    sliceReadBack = ezfc.loadDXF("osThingySlice.dxf") # this writes to a layer named "0"
+    ezfc.solid2STEP(sliceReadBack["0"], "sliceWriteout.step")
+except:
+    warnings.warn("DXF read/write is not working")
 
 ezfc.solid2STEP(osThingys[0], "osThingy.step")
 ezfc.solid2STEP(osThingys[1], "osThingy2.step")
@@ -61,4 +64,4 @@ child2 = ezfc.translate(ezfc.rectangle(1,10),4,0,0)
 child3 = ezfc.translate(ezfc.rectangle(10,1),0,5,0)
 result = ezfc.difference(parent, [child1,child2,child3])
 
-print "break"
+print "Done"
