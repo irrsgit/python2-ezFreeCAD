@@ -1,10 +1,14 @@
 #!/usr/bin/env python2
 
 from __future__ import division
+
+import sys
+sys.path.append('/usr/lib/freecad') # path to your FreeCAD.so or FreeCAD.dll file
+import FreeCAD
 import ezFreeCAD
 
 
-myCone = cone(10, 0, 30)
+myCone = ezFreeCAD.cone(10, 0, 30)
 mySphere = sphere(10)
 mySphere = translate(mySphere,0,0,25)
 pawn = union(myCone,mySphere)
