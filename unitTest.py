@@ -1,6 +1,8 @@
+#!/usr/bin/env python2
+
 from __future__ import division
-from __init__ import *
-#import ezFreeCAD
+import ezFreeCAD
+
 
 myCone = cone(10, 0, 30)
 mySphere = sphere(10)
