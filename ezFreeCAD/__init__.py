@@ -1,6 +1,11 @@
 #!/usr/bin/env python2
 
+FREECADPATH = '/usr/lib/freecad' # path to your FreeCAD.so or FreeCAD.dll file
+import sys
+sys.path.append(FREECADPATH)
+
 # this library tries to abstract away all that annoys me when using Python to draw with FreeCAD 
+# it tries to make pythong FreeCAD designing as easy as drawing things with OpenSCAD
 # Written by Grey Christoforo <first name [at] last name [dot] net>
 
 import FreeCAD
