@@ -9,7 +9,7 @@ import Part
 import Mesh
 
 # let's make sure the FreeCAD module has been imported
-if not `FreeCAD` in sys.modules:
+if not 'FreeCAD' in sys.modules:
     raise ImportError('You must import the FreeCAD module')
 
 try:
