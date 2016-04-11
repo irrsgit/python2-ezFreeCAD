@@ -5,9 +5,15 @@ Python wrapper for interfacing with FreeCAD it make it easier to draw 3D objects
 
 ### Ubuntu
 #### 15.10
+NOTE: THIS DOES NOT WORK (ubuntu needs opencascade)
+This library uses a fairly new feature in FreeCAD (the multiFuse attribute of Part.TopoShape). At the time of this writing (April 2016) the version of FreeCAD in ubuntu 15.10 is too old. This can be fixed by insalling some packages from some of the freecad-maintainers' ppas:
 ```
-sudo apt-get install python2.7 freecad python-pip git freecad
-pip2 install --upgrade git+https://github.com/AFMD/ezFreeCAD.git
+sudo add-apt-repository ppa:freecad-maintainers/freecad-daily
+sudo add-apt-repository 'deb http://ppa.launchpad.net/freecad-maintainers/oce-release/ubuntu vivid main'
+sudo apt-get update #<-- update your package lists
+sudo apt-get upgrade #<-- upgrade any packages that might have been impacted by the new software sources you added
+sudo apt-get install python2.7 python-pip git freecad #<-- install the prerequisites
+pip2 install --upgrade git+https://github.com/AFMD/ezFreeCAD.git #<-- install this library
 ```
 ## Usage
 The FreeCAD python module must be imported before `import ezFreeCAD` will work.  
