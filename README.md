@@ -4,20 +4,40 @@ Python wrapper for interfacing with FreeCAD it make it easier to draw 3D objects
 ## Installation
 
 ### Ubuntu
+As it turns out, it's not so "ez" to get this library working in Ubuntu. It requires a version of FreeCAD's geometry kernel that I haven't found packaged for Debian, so you have to build the required geometry kernel and also FreeCAD yourself before installing this python2 thing. Here are the steps for that:
 #### 15.10
-NOTE: THIS DOES NOT WORK (ubuntu needs opencascade)
-This library uses a fairly new feature in FreeCAD (the multiFuse attribute of Part.TopoShape). At the time of this writing (April 2016) the version of FreeCAD in ubuntu 15.10 is too old. This can be fixed by insalling some packages from some of the freecad-maintainers' ppas:
 ```
-sudo add-apt-repository ppa:freecad-maintainers/freecad-daily
-sudo add-apt-repository 'deb http://ppa.launchpad.net/freecad-maintainers/oce-release/ubuntu vivid main'
-sudo apt-get update #<-- update your package lists
-sudo apt-get upgrade #<-- upgrade any packages that might have been impacted by the new software sources you added
-sudo apt-get install python2.7 python-pip git freecad #<-- install the prerequisites
+mkdir ezFreeCAD-stuff
+cd ezFreeCAD-stuff
+sudo apt-get install tcl-vtk6 ftgl-dev vtk6 tk-dev libxmu-dev mesa-common-dev libxi-dev autoconf libtool automake
+wget https://users.physics.ox.ac.uk/~christoforo/opencascade/src-tarballs/opencascade-6.9.1.tgz
+tar -xvf opencascade-*.tgz
+cd opencascade-*
+./build_configure
+./configure --disable-debug --enable-production --with-ftgl=/usr/include/FTGL --prefix=/tmp/occe
+make -j4 #<-- -j# there specifies how many CPU cores to use for compilation
+make install
+mv /tmp/occe ..
+
+cd ..
+sudo apt-get build-dep freecad
+apt-get src freecad
+cd freecad-*
+sed -i 's,-DOCC_INCLUDE_DIR="/usr/include/oce" \\,-DOCC_INCLUDE_DIR="/tmp/occe/inc" -DOCC_LIBRARY_DIR="/tmp/occe/lib" \\,g' debian/rules
+dpkg-buildpackage -rfakeroot -uc -b
+sudo dpkg -i *.deb
+
+sudo apt-get install python2.7 python-pip git
+pip2 install --upgrade git+https://github.com/AFMD/ezFreeCAD.git #<-- install this library
+```
+### Arch
+```
+pacman -S freecad pip2 git
 pip2 install --upgrade git+https://github.com/AFMD/ezFreeCAD.git #<-- install this library
 ```
 ## Usage
 The FreeCAD python module must be imported before `import ezFreeCAD` will work.  
-`import FreeCAD` will import this module directly from the FreeCAD.so (FreeCAD.dll in Windows) file that's distributed with your FreeCAD package. The only catch here is that the directory containing your FreeCAD.so or FreeCAD.dll file must be in your `sys.path` python variable before you try to `import FreeCAD`.  
+`import FreeCAD` will import directly from the FreeCAD.so (FreeCAD.dll in Windows) file that's distributed with your FreeCAD package. The only catch here is that the directory containing your FreeCAD.so or FreeCAD.dll file must be in your `sys.path` python variable before you try to `import FreeCAD`.  
 Here are some of the default locations for the FreeCAD.so file that I'm aware of:  
 
 OS | Directory containing FreeCAD.so
