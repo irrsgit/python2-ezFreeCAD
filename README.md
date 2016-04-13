@@ -14,16 +14,15 @@ wget https://users.physics.ox.ac.uk/~christoforo/opencascade/src-tarballs/openca
 tar -xvf opencascade-*.tgz
 cd opencascade-*
 ./build_configure
-./configure --disable-debug --enable-production --with-ftgl=/usr/include/FTGL --prefix=/tmp/occe
+./configure --disable-debug --enable-production --with-ftgl=/usr/include/FTGL --prefix=/tmp/occt
 make -j4 #<-- -j# there specifies how many CPU cores to use for compilation
 make install
-mv /tmp/occe ..
 
 cd ..
 sudo apt-get build-dep freecad
 apt-get src freecad
 cd freecad-*
-sed -i 's,-DOCC_INCLUDE_DIR="/usr/include/oce" \\,-DOCC_INCLUDE_DIR="/tmp/occe/inc" -DOCC_LIBRARY_DIR="/tmp/occe/lib" \\,g' debian/rules
+sed -i 's,-DOCC_INCLUDE_DIR="/usr/include/oce" \\,-DOCC_INCLUDE_DIR="/tmp/occt/inc" -DOCC_LIBRARY_DIR="/tmp/occt/lib" \\,g' debian/rules
 dpkg-buildpackage -rfakeroot -uc -b
 sudo dpkg -i *.deb
 
