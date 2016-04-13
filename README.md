@@ -4,7 +4,7 @@ Python wrapper for interfacing with FreeCAD it make it easier to draw 3D objects
 ## Installation
 
 ### Ubuntu
-As it turns out, it's not so "ez" to get this library working in Ubuntu. It requires a version of FreeCAD's geometry kernel that I haven't found packaged for Debian, so you have to build the required geometry kernel and also FreeCAD yourself before installing this python2 thing. Here are the steps for that:
+As it turns out, it's not so "ez" to get this library working in Ubuntu. It requires a version of FreeCAD's geometry kernel that I haven't found packaged for Debian, so you have to build the required geometry kernel and also FreeCAD yourself before you're able to use this project. Here are the steps for that:
 #### 15.10
 ```
 mkdir ezFreeCAD-stuff
