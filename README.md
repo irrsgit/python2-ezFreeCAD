@@ -24,7 +24,7 @@ apt-get src freecad
 cd freecad-*
 sed -i 's,-DOCC_INCLUDE_DIR="/usr/include/oce" \\,-DOCC_INCLUDE_DIR="/tmp/occt/inc" -DOCC_LIBRARY_DIR="/tmp/occt/lib" \\,g' debian/rules
 dpkg-buildpackage -rfakeroot -uc -b
-sudo dpkg -i *.deb
+sudo dpkg -i ../freecad_*.deb
 
 sudo apt-get install python2.7 python-pip git
 pip2 install --upgrade git+https://github.com/AFMD/ezFreeCAD.git #<-- install this library
