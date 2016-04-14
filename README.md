@@ -9,18 +9,19 @@ As it turns out, it's not so "ez" to get this library working in Ubuntu. It requ
 ```
 mkdir ezFreeCAD-stuff
 cd ezFreeCAD-stuff
-sudo apt-get install tcl-vtk6 ftgl-dev vtk6 tk-dev libxmu-dev mesa-common-dev libxi-dev autoconf libtool automake
+sudo apt-get install tcl-vtk6 ftgl-dev libvtk6-dev tk-dev libxmu-dev mesa-common-dev libxi-dev autoconf libtool automake checkinstall libgl2ps-dev quilt libtbb-dev libfreeimage-dev
 wget https://users.physics.ox.ac.uk/~christoforo/opencascade/src-tarballs/opencascade-6.9.1.tgz
 tar -xvf opencascade-*.tgz
 cd opencascade-*
 ./build_configure
-./configure --disable-debug --enable-production --with-ftgl=/usr/include/FTGL --prefix=/tmp/occt
+./configure --with-vtk-include=/usr/include/vtk-6.2 --with-vtk-library=/usr/lib --disable-debug --enable-production --with-ftgl=/usr/include/FTGL --prefix=/usr --with-tbb-include=/usr/include/tbb --with-tbb-library=/usr/lib --with-gl2ps=/usr/include --with-freeimage=/usr/include
 make -j4 #<-- -j# there specifies how many CPU cores to use for compilation
-make install
+checkinstall -D
+
 
 cd ..
+apt-get source freecad
 sudo apt-get build-dep freecad
-apt-get src freecad
 cd freecad-*
 sed -i 's,-DOCC_INCLUDE_DIR="/usr/include/oce" \\,-DOCC_INCLUDE_DIR="/tmp/occt/inc" -DOCC_LIBRARY_DIR="/tmp/occt/lib" \\,g' debian/rules
 dpkg-buildpackage -rfakeroot -uc -b
