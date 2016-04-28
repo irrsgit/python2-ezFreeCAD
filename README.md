@@ -3,6 +3,12 @@ Python wrapper for interfacing with FreeCAD it make it easier to draw 3D objects
 
 ## Installation
 
+### Windows
+1. Install [git](https://git-scm.com/downloads) using the default install options
+1. Install [WinPython](https://github.com/winpython/winpython/releases/tag/1.2.20151029) with python 2.7
+1. Install the latest release of [FreeCAD](https://github.com/FreeCAD/FreeCAD/releases)
+1. In a `WinPython Command Prompt.exe` terminal session, run `pip install --upgrade git+https://github.com/AFMD/ezFreeCAD.git`
+
 ### Ubuntu
 As it turns out, it's not so "ez" to get this library working in Ubuntu. It requires a version of FreeCAD's geometry kernel that I haven't found packaged for Debian, so you have to build the required geometry kernel and also FreeCAD yourself before you're able to use this project. Here are the steps for that:
 #### 15.10
@@ -44,6 +50,7 @@ OS | Directory containing FreeCAD.so
 ---|---
 Ubuntu | /usr/lib/freecad/lib
 Arch | /usr/lib/freecad
+Windows | C:\\Users\\${USER}\\Downloads\\FreeCAD_0.17.7451_x64_dev_win\\bin
 
 See [unitTest.py](/unitTest.py) for example usage, or add something like
 ```python
