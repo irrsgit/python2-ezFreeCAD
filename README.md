@@ -15,7 +15,7 @@ As it turns out, it's not so "ez" to get this library working in Ubuntu. It requ
 ```
 mkdir ezFreeCAD-stuff
 cd ezFreeCAD-stuff
-sudo apt-get install tcl-vtk6 ftgl-dev libvtk6-dev tk-dev libxmu-dev mesa-common-dev libxi-dev autoconf libtool automake libgl2ps-dev quilt libtbb-dev libfreeimage-dev cmake devscripts
+sudo apt-get install tcl-vtk6 ftgl-dev libvtk6-dev tk-dev libxmu-dev mesa-common-dev libxi-dev autoconf libtool automake libgl2ps-dev quilt libtbb-dev libfreeimage-dev cmake build-essentials
 wget https://users.physics.ox.ac.uk/~christoforo/opencascade/src-tarballs/opencascade-6.9.1.tgz
 tar -xvf opencascade-*.tgz
 cd opencascade-*
@@ -47,7 +47,11 @@ sudo su -c 'echo "source /opt/occt/env.sh" > /etc/profile.d/occt.sh'
 source /opt/occt/env.sh
 
 cd ..
+sudo add-apt-repository ppa:freecad-maintainers/freecad-daily
+sudo apt-get update
+sudo apt-get dist-upgrade
 apt-get source freecad
+spt-get install cmake devscripts tcl8.5-dev tk8.5 tk8.5-dev
 #sudo apt-get build-dep freecad
 cd freecad-*
 sed -i '/liboce-foundation-dev,/d' debian/control
