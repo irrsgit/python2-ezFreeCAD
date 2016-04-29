@@ -19,9 +19,6 @@ sudo apt-get install tcl-vtk6 ftgl-dev libvtk6-dev tk-dev libxmu-dev mesa-common
 wget https://users.physics.ox.ac.uk/~christoforo/opencascade/src-tarballs/opencascade-6.9.1.tgz
 tar -xvf opencascade-*.tgz
 cd opencascade-*
-#sed -i -e '$aSET(MAJOR_VERSION 6)' CMakeLists.txt
-#sed -i -e '$aSET(MINOR_VERSION 9)' CMakeLists.txt
-#sed -i -e '$aSET(PATCH_VERSION 1)' CMakeLists.txt
 sed -i -e '$aINCLUDE(CPack)' CMakeLists.txt
 mkdir -p build
 cd build
