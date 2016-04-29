@@ -15,7 +15,7 @@ As it turns out, it's not so "ez" to get this library working in Ubuntu. It requ
 ```
 mkdir ezFreeCAD-stuff
 cd ezFreeCAD-stuff
-sudo apt-get install tcl-vtk6 ftgl-dev libvtk6-dev tk-dev libxmu-dev mesa-common-dev libxi-dev autoconf libtool automake libgl2ps-dev quilt libtbb-dev libfreeimage-dev cmake
+sudo apt-get install tcl-vtk6 ftgl-dev libvtk6-dev tk-dev libxmu-dev mesa-common-dev libxi-dev autoconf libtool automake libgl2ps-dev quilt libtbb-dev libfreeimage-dev cmake devscripts
 wget https://users.physics.ox.ac.uk/~christoforo/opencascade/src-tarballs/opencascade-6.9.1.tgz
 tar -xvf opencascade-*.tgz
 cd opencascade-*
@@ -27,7 +27,10 @@ flags="$flags -DCMAKE_BUILD_TYPE=Release"
 flags="$flags -DCPACK_PACKAGE_VERSION_MAJOR=6"
 flags="$flags -DCPACK_PACKAGE_VERSION_MINOR=9"
 flags="$flags -DCPACK_PACKAGE_VERSION_PATCH=1"
-flags="$flags -DINSTALL_DIR=/usr"
+#flags="$flags -DINSTALL_PREFIX=/usr"
+#flags="$flags -DINSTALL_LIB_DIR=lib/"'$(DEB_HOST_MULTIARCH)'
+#flags="$flags -DCMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES=/lib/"'$(DEB_HOST_MULTIARCH)'";/usr/lib/"'$(DEB_HOST_MULTIARCH)'
+flags="$flags -DINSTALL_DIR=/opt/occt"
 #flags="$flags 3RDPARTY_VTK_INCLUDE_DIR=/opt/vtk6/include"
 #flags="$flags 3RDPARTY_VTK_LIBRARY_DIR=/opt/vtk6/lib"
 #flags="$flags -DUSE_GL2PS=ON"
@@ -39,12 +42,23 @@ flags="$flags -DINSTALL_DIR=/usr"
 cmake $flags ..
 make -j4 #<-- "-j4" directs the system to use four compilation threads (don't use more than your number of logical CPU cores)
 cpack -D CPACK_GENERATOR="DEB" -D CPACK_PACKAGE_CONTACT="none"
+sudo dpkg -i OCCT-*.deb
+sudo su -c 'echo "source /opt/occt/env.sh" > /etc/profile.d/occt.sh'
+source /opt/occt/env.sh
 
 cd ..
 apt-get source freecad
-sudo apt-get build-dep freecad
+#sudo apt-get build-dep freecad
 cd freecad-*
-sed -i 's,-DOCC_INCLUDE_DIR="/usr/include/oce" \\,-DOCC_INCLUDE_DIR="/tmp/occt/inc" -DOCC_LIBRARY_DIR="/tmp/occt/lib" \\,g' debian/rules
+sed -i '/liboce-foundation-dev,/d' debian/control
+sed -i '/liboce-modeling-dev,/d' debian/control
+sed -i '/liboce-ocaf-dev,/d' debian/control
+sed -i '/liboce-visualization-dev,/d' debian/control
+sed -i '/oce-draw,/d' debian/control
+mk-build-deps
+sudo dpkg -i freecad-build-deps* #<-- Errors here, that's fine we'll fix them in the next step
+sudo apt-get -f install
+sed -i 's,-DOCC_INCLUDE_DIR="/usr/include/oce" \\,-DOCC_INCLUDE_DIR="/opt/occt/inc" \\\n-DOCC_LIBRARY_DIR="/opt/occt/lin64/gcc/lib" \\,g' debian/rules
 dpkg-buildpackage -rfakeroot -uc -b
 sudo dpkg -i ../freecad_*.deb
 
