@@ -19,14 +19,17 @@ sudo apt-get install tcl-vtk6 ftgl-dev libvtk6-dev tk-dev libxmu-dev mesa-common
 wget https://users.physics.ox.ac.uk/~christoforo/opencascade/src-tarballs/opencascade-6.9.1.tgz
 tar -xvf opencascade-*.tgz
 cd opencascade-*
-sed -i -e '$aSET(MAJOR_VERSION 6)' CMakeLists.txt
-sed -i -e '$aSET(MINOR_VERSION 9)' CMakeLists.txt
-sed -i -e '$aSET(PATCH_VERSION 1)' CMakeLists.txt
+#sed -i -e '$aSET(MAJOR_VERSION 6)' CMakeLists.txt
+#sed -i -e '$aSET(MINOR_VERSION 9)' CMakeLists.txt
+#sed -i -e '$aSET(PATCH_VERSION 1)' CMakeLists.txt
 sed -i -e '$aINCLUDE(CPack)' CMakeLists.txt
 mkdir -p build
 cd build
 flags=""
 flags="$flags -DCMAKE_BUILD_TYPE=Release"
+flags="$flags -DCPACK_PACKAGE_VERSION_MAJOR=6"
+flags="$flags -DCPACK_PACKAGE_VERSION_MINOR=9"
+flags="$flags -DCPACK_PACKAGE_VERSION_PATCH=1"
 flags="$flags -DINSTALL_DIR=/usr"
 #flags="$flags 3RDPARTY_VTK_INCLUDE_DIR=/opt/vtk6/include"
 #flags="$flags 3RDPARTY_VTK_LIBRARY_DIR=/opt/vtk6/lib"
