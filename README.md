@@ -15,14 +15,29 @@ As it turns out, it's not so "ez" to get this library working in Ubuntu. It requ
 ```
 mkdir ezFreeCAD-stuff
 cd ezFreeCAD-stuff
-sudo apt-get install tcl-vtk6 ftgl-dev libvtk6-dev tk-dev libxmu-dev mesa-common-dev libxi-dev autoconf libtool automake checkinstall libgl2ps-dev quilt libtbb-dev libfreeimage-dev
+sudo apt-get install tcl-vtk6 ftgl-dev libvtk6-dev tk-dev libxmu-dev mesa-common-dev libxi-dev autoconf libtool automake checkinstall libgl2ps-dev quilt libtbb-dev libfreeimage-dev cmake
 wget https://users.physics.ox.ac.uk/~christoforo/opencascade/src-tarballs/opencascade-6.9.1.tgz
 tar -xvf opencascade-*.tgz
 cd opencascade-*
-./build_configure
-./configure --with-vtk-include=/usr/include/vtk-6.2 --with-vtk-library=/usr/lib --disable-debug --enable-production --with-ftgl=/usr/include/FTGL --prefix=/usr --with-tbb-include=/usr/include/tbb --with-tbb-library=/usr/lib --with-gl2ps=/usr/include --with-freeimage=/usr/include
+sed -i -e '$aINCLUDE(CPack)' CMakeLists.txt
+mkdir -p build
+cd build
+flags=""
+flags="$flags -DCMAKE_BUILD_TYPE=Release"
+#flags="$flags 3RDPARTY_VTK_INCLUDE_DIR=/opt/vtk6/include"
+#flags="$flags 3RDPARTY_VTK_LIBRARY_DIR=/opt/vtk6/lib"
+#flags="$flags -DUSE_GL2PS=ON"
+#flags="$flags -DUSE_FREEIMAGE=ON"
+#flags="$flags -DUSE_TBB=ON"
+#flags="$flags -DUSE_VTK=ON"
+#flags="$flags -DUSE_TBB=OFF"
+#flags="$flags -DUSE_TBB=ON"
+cmake $flags ..
+#./build_configure
+#./configure --with-vtk-include=/usr/include/vtk-6.2 --with-vtk-library=/usr/lib --disable-debug --enable-production #--with-ftgl=/usr/include/FTGL --prefix=/usr --with-tbb-include=/usr/include/tbb --with-tbb-library=/usr/lib #--with-gl2ps=/usr/include --with-freeimage=/usr/include
 make -j4 #<-- -j# there specifies how many CPU cores to use for compilation
-checkinstall -D
+#checkinstall -D
+cpack -D CPACK_GENERATOR="DEB" -D CPACK_PACKAGE_CONTACT="none" -D CPACK_DEBIAN_PACKAGE_VERSION="6.9.1"
 
 
 cd ..
