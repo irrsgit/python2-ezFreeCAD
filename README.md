@@ -39,17 +39,16 @@ flags="$flags -DINSTALL_DIR=/opt/occt"
 #flags="$flags -DUSE_VTK=ON"
 #flags="$flags -DUSE_TBB=OFF"
 #flags="$flags -DUSE_TBB=ON"
-cmake $flags ..
+cmake $flags ..H1
 make -j4 #<-- "-j4" directs the system to use four compilation threads (don't use more than your number of logical CPU cores)
 cpack -D CPACK_GENERATOR="DEB" -D CPACK_PACKAGE_CONTACT="none"
 sudo dpkg -i OCCT-*.deb
 sudo su -c 'echo "source /opt/occt/env.sh" > /etc/profile.d/occt.sh'
+sudo sed -i 's,aScriptPath=\${BASH_SOURCE%/\*}; if \[ -d "\${aScriptPath}" \]; then cd "\$aScriptPath"; fi; aScriptPath="\$PWD";,aScriptPath=\${BASH_SOURCE%/\*}; if \[ -d "\${aScriptPath}" \]; then pushd "\$aScriptPath"; fi; aScriptPath="\$PWD"; popd;,g' /opt/occt/env.sh
 source /opt/occt/env.sh
 
 cd ..
-sudo add-apt-repository ppa:freecad-maintainers/freecad-daily
-sudo apt-get update
-sudo apt-get dist-upgrade
+sudo add-apt-repository -su ppa:freecad-maintainers/freecad-daily
 apt-get source freecad
 spt-get install cmake devscripts tcl8.5-dev tk8.5 tk8.5-dev
 #sudo apt-get build-dep freecad
