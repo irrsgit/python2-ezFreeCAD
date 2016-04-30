@@ -66,7 +66,7 @@ sudo apt-get -f install
 sed -i 's,-DOCC_INCLUDE_DIR="/usr/include/oce" \\,-DOCC_INCLUDE_DIR="/opt/occt/inc" \\\n-DOCC_LIBRARY_DIR="/opt/occt/lin64/gcc/lib" \\,g' debian/rules
 dpkg-buildpackage -rfakeroot -uc -b
 sudo apt-get remove netgen-headers libnglib-4.9.13 libnglib-dev
-sudo dpkg -i ../freecad_*.deb
+sudo dpkg -i freecad_*.deb
 
 sudo apt-get install python2.7 python-pip git
 pip2 install --upgrade git+https://github.com/AFMD/ezFreeCAD.git #<-- install this library
@@ -104,3 +104,5 @@ cd ezFreeCAD
 python2 setup.py install #<--install your hacked package
 ./unitTest.py #<--test your hacks
 ```
+
+TODO: writeup info on installing dxfLibrary
