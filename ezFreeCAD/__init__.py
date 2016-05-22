@@ -35,6 +35,9 @@ def cone(r1,r2,height):
 def rectangle(xDim,yDim):
     return Part.makePlane(xDim,yDim)
 
+def cube(xDim,yDim,zDim):
+    return Part.makeBox(xDim,yDim,zDim)
+
 # returns a circular face given a radius
 def circle(radius):
     circEdge = Part.makeCircle(radius)
