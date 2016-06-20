@@ -15,7 +15,7 @@ As it turns out, it's not so "ez" to get this library working in Ubuntu. It requ
 ```
 mkdir ezFreeCAD-stuff
 cd ezFreeCAD-stuff
-sudo apt-get install tcl-vtk6 ftgl-dev libvtk6-dev tk-dev libxmu-dev mesa-common-dev libxi-dev autoconf libtool automake libgl2ps-dev quilt libtbb-dev libfreeimage-dev cmake build-essentials
+sudo apt-get install tcl-vtk6 ftgl-dev libvtk6-dev tk-dev libxmu-dev mesa-common-dev libxi-dev autoconf libtool automake libgl2ps-dev quilt libtbb-dev libfreeimage-dev cmake build-essential
 wget https://users.physics.ox.ac.uk/~christoforo/opencascade/src-tarballs/opencascade-6.9.1.tgz
 tar -xvf opencascade-*.tgz
 cd opencascade-*
@@ -39,7 +39,7 @@ flags="$flags -DINSTALL_DIR=/opt/occt"
 #flags="$flags -DUSE_VTK=ON"
 #flags="$flags -DUSE_TBB=OFF"
 #flags="$flags -DUSE_TBB=ON"
-cmake $flags ..H1
+cmake $flags ..
 make -j4 #<-- "-j4" directs the system to use four compilation threads (don't use more than your number of logical CPU cores)
 cpack -D CPACK_GENERATOR="DEB" -D CPACK_PACKAGE_CONTACT="none"
 sudo dpkg -i OCCT-*.deb
